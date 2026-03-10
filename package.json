@@ -1,5 +1,5 @@
 {
-  "name": "upgate",
+  "name": "upgate-sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for the UpGate payment orchestration platform",
   "license": "MIT",

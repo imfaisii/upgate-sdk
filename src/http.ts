@@ -54,7 +54,7 @@ export class HttpClient {
           return toCamelCase(raw) as T;
         }
 
-        const errorBody = await response.json().catch(() => ({ errors: [] })) as ApiErrorResponse;
+        const errorBody = await response.json().catch(() => ({ errors: [] })) as Record<string, unknown>;
 
         // Never retry 4xx (except 429)
         if (response.status < 500 && response.status !== 429) {
@@ -154,13 +154,14 @@ export class HttpClient {
 
   private throwForStatus(
     status: number,
-    body: ApiErrorResponse,
+    body: Record<string, unknown>,
     requestId?: string,
   ): never {
-    // Transform error details to camelCase
-    const errors = (body.errors ?? []).map((e) => ({
-      errorCode: (e as Record<string, unknown>).error_code ?? e.errorCode,
-      errorMessage: (e as Record<string, unknown>).error_message ?? e.errorMessage,
+    // Error responses come in snake_case from the API — normalize to camelCase
+    const rawErrors = (body.errors ?? []) as Array<Record<string, unknown>>;
+    const errors = rawErrors.map((e) => ({
+      errorCode: (e.error_code ?? e.errorCode) as string,
+      errorMessage: (e.error_message ?? e.errorMessage) as string,
     })) as ApiErrorResponse['errors'];
 
     switch (status) {
