@@ -1,0 +1,8 @@
+src/
+tsconfig.json
+tsup.config.ts
+.env*
+.git/
+node_modules/
+*.test.ts
+upgate-complete.md
